@@ -1,8 +1,5 @@
 package fr.yohan.todolist;
 
-import android.app.DatePickerDialog;
-import android.icu.util.Calendar;
-import android.icu.util.ChineseCalendar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -21,7 +18,6 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private LinearLayout myLayout;
-    private LinearLayout myTask;
     private MainActivity ctx;
 
     @Override
@@ -49,16 +45,48 @@ public class MainActivity extends AppCompatActivity {
                 customTaskPopup.getAddButton().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        TextView text = new TextView(ctx);
+                        final TextView text = new TextView(ctx);
                         text.setText(Html.fromHtml("<b>" + customTaskPopup.getEditTitle().getText() + "</b>" + "<br />" +
                                 "<small>" + customTaskPopup.getEditContent().getText() + "</small>" + "<br />" + "<br />" +
                                 "<small>" + customTaskPopup.getEditDate().getText() + "</small>"));
                         text.setBackgroundColor(getResources().getColor(R.color.colorBackground));
                         text.setTextColor(getResources().getColor(R.color.colorText));
-                        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT);
                         lparams.setMargins(15, 5, 15, 5);
                         text.setLayoutParams(lparams);
                         text.setPadding(20, 20, 20, 20);
+                        text.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                final CustomTaskEditPopup customTaskEditPopup = new CustomTaskEditPopup(ctx,
+                                        customTaskPopup.getEditTitle().getText().toString(), customTaskPopup.getEditContent().getText().toString(),
+                                        customTaskPopup.getEditDate().getText().toString());
+                                customTaskEditPopup.getCancelButton().setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        customTaskEditPopup.dismiss();
+                                    }
+                                });
+                                customTaskEditPopup.getEditButton().setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        text.setText(Html.fromHtml("<b>" + customTaskEditPopup.getEditTitle().getText() + "</b>" + "<br />" +
+                                                "<small>" + customTaskEditPopup.getEditContent().getText() + "</small>" + "<br />" + "<br />" +
+                                                "<small>" + customTaskEditPopup.getEditDate().getText() + "</small>"));
+                                        customTaskEditPopup.dismiss();
+                                    }
+                                });
+                                customTaskEditPopup.getDoneButton().setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        myLayout.removeView(text);
+                                        customTaskEditPopup.dismiss();
+                                    }
+                                });
+                                customTaskEditPopup.build();
+                            }
+                        });
                         try {
                             addTask(text);
                         } catch (ParseException e) {

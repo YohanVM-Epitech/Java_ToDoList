@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                                 customTaskEditPopup.getDoneButton().setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        myLayout.removeView(text);
+                                        text.setBackgroundColor(getResources().getColor(R.color.colorCheck));
                                         customTaskEditPopup.dismiss();
                                     }
                                 });
